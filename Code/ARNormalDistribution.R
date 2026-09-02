@@ -64,6 +64,53 @@ NormalAR = function(n){
   
   return(df)
 }
+
+# Second version where we propose with batched to make it
+# computationally more efficient
+NormalARfast = function(n){
+  
+  # Rejection constant
+  M = sqrt(2*pi/exp(1))
+  
+  # Acceptance probability
+  p = 1/M
+  
+  # Output vector
+  Y = numeric(n)
+  
+  # Number accepted so far
+  counter = 0
+  
+  while(counter < n){
+    
+    # Number still required
+    remaining = n-counter
+    
+    # Generate slightly more than the expected number required
+    m = ceiling(1.1*remaining/p)
+    
+    # Vector of proposals
+    X = rcauchy(m)
+    U = runif(m)
+    
+    # Acceptance probability
+    prob = sqrt(exp(1))/2*(1+X^2)*exp(-X^2/2)
+    
+    # Accepted proposals
+    accepted = X[U <= prob]
+    
+    # Number we can use
+    k = min(length(accepted),remaining)
+    
+    if(k > 0){
+      Y[(counter+1):(counter+k)] = accepted[1:k]
+      counter = counter+k
+    }
+  }
+  
+  return(Y)
+}
+
 ############################################################
 
 ############################################################
@@ -163,6 +210,7 @@ shapiro.test(normalSample$sample)
 # implementation. 
 microbenchmark(
   AR = NormalAR(1000),
+  ARFast = NormalARfast(1000),
   RDefault=rnorm(1000), 
   times=1000)
 ############################################################
