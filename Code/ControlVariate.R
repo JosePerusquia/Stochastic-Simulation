@@ -15,7 +15,7 @@ library(dplyr)        # Version 1.2.0
 ##########################################################
 # Estimate integral of exp(x) from 0 to 1 using independent
 # uniform (0,1) distributions
-# exact probability: exo(1)-1
+# exact probability: exp(1)-1
 set.seed(314)
 I_true = exp(1) - 1
 
@@ -58,7 +58,7 @@ ggplot(df_theta_MC, aes(x = n)) +
 ##########################################################
 
 ##########################################################
-# Control variate 
+# Control variate using Z=U
 
 # Optimal coefficient
 beta = 6 * (3 - exp(1))
